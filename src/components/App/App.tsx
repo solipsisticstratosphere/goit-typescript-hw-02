@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import SearchBar from "../SearchBar/SearchBar";
 import "./App.css";
-import { fetchImages } from "../../images-api";
+import { fetchImages, FetchImagesResponse, Image } from "../../images-api";
 import ImageGallery from "../ImageGallery/ImageGallery";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import Loader from "../Loader/Loader";
@@ -9,14 +9,14 @@ import ImageModal from "../ImageModal/ImageModal";
 import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
 
 function App() {
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState("");
-  const [showBtn, setShowBtn] = useState(false);
+  const [images, setImages] = useState<Image[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const [query, setQuery] = useState<string>("");
+  const [showBtn, setShowBtn] = useState<boolean>(false);
 
   useEffect(() => {
     if (query) {
@@ -24,14 +24,14 @@ function App() {
     }
   }, [query, page]);
 
-  const fetchImagesData = async () => {
+  const fetchImagesData = async (): Promise<void> => {
     try {
       setLoading(true);
       setError(false);
-      const data = await fetchImages(query, page);
+      const data: FetchImagesResponse = await fetchImages(query, page);
       setImages((prevImages) => [...prevImages, ...data.results]);
 
-      setShowBtn(data.total_pages && data.total_pages !== page);
+      setShowBtn(data.total_pages !== page);
     } catch (error) {
       console.log(error);
       setError(true);
@@ -40,23 +40,23 @@ function App() {
     }
   };
 
-  const handleSearch = (image) => {
+  const handleSearch = (image: string): void => {
     setQuery(image);
     setPage(1);
     setImages([]);
   };
 
-  const openModal = (image) => {
+  const openModal = (image: Image): void => {
     setSelectedImage(image);
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
+  const closeModal = (): void => {
     setIsModalOpen(false);
     setSelectedImage(null);
   };
 
-  const loadMore = () => {
+  const loadMore = (): void => {
     setPage((prevPage) => prevPage + 1);
   };
 

@@ -1,9 +1,14 @@
-export default function SearchBar({ onSearch }) {
-  const handleSubmit = (evt) => {
+import { FormEvent } from "react";
+interface SearchBarProps {
+  onSearch: (image: string) => void;
+}
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    const form = evt.target;
-    const image = form.elements.image.value;
-    if (form.elements.image.value.trim() === "") {
+    const form = evt.target as HTMLFormElement;
+    const input = form.elements.namedItem("image") as HTMLFormElement;
+    const image = input.value;
+    if (image.trim() === "") {
       alert("Please enter search term!");
       return;
     }
@@ -24,4 +29,5 @@ export default function SearchBar({ onSearch }) {
       </form>
     </header>
   );
-}
+};
+export default SearchBar;
